@@ -4,8 +4,10 @@ package com.example.demo.dto;
 
 import java.util.List;
 
+import org.springframework.hateoas.RepresentationModel;
 
-public class AuthorDto {
+
+public class AuthorDto  extends RepresentationModel<AuthorDto> {
 
     private Integer id;
     private String name;
@@ -38,6 +40,7 @@ public class AuthorDto {
 		super();
 	
 	}
+	
 
     
     

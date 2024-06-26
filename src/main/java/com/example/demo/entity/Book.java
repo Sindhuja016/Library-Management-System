@@ -1,4 +1,6 @@
 package com.example.demo.entity;
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,8 +15,36 @@ public class Book {
     private Integer id;
 
     private String title;
+    private LocalDate publicationDate;
+    private String genre;
+    private String language;
+   
+    
+    public LocalDate getPublicationDate() {
+		return publicationDate;
+	}
 
-    @ManyToOne
+	public void setPublicationDate(LocalDate publicationDate) {
+		this.publicationDate = publicationDate;
+	}
+
+	public String getGenre() {
+		return genre;
+	}
+
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	@ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
@@ -41,6 +71,7 @@ public class Book {
 	public void setAuthor(Author author) {
 		this.author = author;
 	}
+	
     
     
 }
