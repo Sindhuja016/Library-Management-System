@@ -44,7 +44,7 @@ public class Book {
 		this.language = language;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 

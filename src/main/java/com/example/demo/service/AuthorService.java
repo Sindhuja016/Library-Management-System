@@ -182,6 +182,11 @@ public class AuthorService {
 		
 
 	}
+	public void deleteAll() {
+		aRepo.deleteAll();
+	}
+	
+	
 	
 	public Page<AuthorDto> getAllAuthors(int page, int size) {
 	        PageRequest pageable=PageRequest.of(page, size);
@@ -215,12 +220,6 @@ public class AuthorService {
 	        return new  PageImpl<>(adto,pageable,author.getTotalElements());
 
 	    }
-	public void deleteAll() {
-		aRepo.deleteAll();
-	}
+
 	
-	
-
-
-
 }

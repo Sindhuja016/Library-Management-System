@@ -65,6 +65,9 @@ public class AuthorController {
 	 public void deleteAll() {
 		 authorservice.deleteAll();
 	 }
+	 
+	
+	 
     @GetMapping("/authors")
 	public PagedModel<EntityModel<AuthorDto>> getAllAuthors(
 	            @RequestParam(value = "page", defaultValue = "0") int page,
@@ -72,4 +75,5 @@ public class AuthorController {
 	        Page<AuthorDto> authorsPage = authorservice.getAllAuthors(page, size);
 	        return pagedResourcesAssembler.toModel(authorsPage);
 	    }
+    
 }
