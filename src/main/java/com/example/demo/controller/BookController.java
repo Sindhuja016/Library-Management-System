@@ -7,7 +7,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -102,4 +104,9 @@ public class BookController {
         Page<BookDto> bookPage = bookService.filterBookByAuthor(name, pageable);
         return pagedResourcesAssembler.toModel(bookPage);
     }
+    @DeleteMapping("/deletebook/{id}")
+    public void deleteUser(@PathVariable Integer id) {
+        bookService.deleteUser(id);
+    }
+   
 }

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Author Management</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Author Management</h1>
+    </header>
+
+    <nav>
+        <ul>
+           <li><a href="index.html">Home Page</a></li>
+            <li><a href="adduser.html">Add Books</a></li>
+            <li><a href="update.html">Update Book</a></li>
+            <li><a href="delete.html">Delete book</a></li>
+            
+        </ul>
+    </nav>
+
+    <div id="content">
+        <h2>Authors List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Author ID</th>
+                    <th>Author Name</th>
+                    <th>Book ID</th>
+                    <th>Title</th>
+                    <th>Publication Date</th>
+                    <th>Genre</th>
+                    <th>Language</th>
+                </tr>
+            </thead>
+            <tbody id="authors-table-body"></tbody>
+        </table>
+        <div class="pagination">
+            <button id="prev-page" onclick="loadAuthors(currentPage - 1)">Previous</button>
+            <button id="next-page" onclick="loadAuthors(currentPage + 1)">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        const pageSize = 4;
+
+        function loadAuthors(page = 0) {
+            fetch(`/api/authors?page=${page}&size=${pageSize}`)
+                .then(response => response.json())
+                .then(data => {
+                    const authors = data._embedded.authorDtoList;
+                    const authorsTableBody = document.getElementById('authors-table-body');
+                    authorsTableBody.innerHTML = '';
+                    authors.forEach(author => {
+                        author.books.forEach((book, index) => {
+                            const row = document.createElement('tr');
+                            if (index === 0) {
+                                row.innerHTML = `
+                                    <td rowspan="${author.books.length}">${author.id}</td>
+                                    <td rowspan="${author.books.length}">${author.name}</td>
+                                    <td>${book.id}</td>
+                                    <td>${book.title}</td>
+                                    <td>${book.publicationDate}</td>
+                                    <td>${book.genre}</td>
+                                    <td>${book.language}</td>
+                                `;
+                            } else {
+                                row.innerHTML = `
+                                    <td>${book.id}</td>
+                                    <td>${book.title}</td>
+                                    <td>${book.publicationDate}</td>
+                                    <td>${book.genre}</td>
+                                    <td>${book.language}</td>
+                                `;
+                            }
+                            authorsTableBody.appendChild(row);
+                        });
+                    });
+                    document.getElementById('prev-page').disabled = !data._links.prev;
+                    document.getElementById('next-page').disabled = !data._links.next;
+                    currentPage = page;
+                })
+                .catch(error => console.error('Error fetching authors:', error));
+        }
+
+        function loadCreateAuthorForm() {
+            // Implement logic to load create author form
+            console.log('Loading create author form...');
+        }
+
+        function loadUpdateAuthorForm() {
+            // Implement logic to load update author form
+            console.log('Loading update author form...');
+        }
+
+        function loadDeleteAuthorForm() {
+            // Implement logic to load delete author form
+            console.log('Loading delete author form...');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initially load authors
+            loadAuthors();
+        });
+    </script>
+<button onclick="history.back()">Go Back</button>
+    
+</body>
+</html>

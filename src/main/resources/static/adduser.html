@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Book</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Add New Book</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">Home Page</a></li>
+            <li><a href="authors.html">View All Books</a></li>
+            <li><a href="update.html">Update Book</a></li>
+            <li><a href="delete.html">Delete book</a></li>
+           
+        </ul>
+    </nav>
+
+    <form id="create-author-form" onsubmit="createAuthor(event)">
+        <label for="authorName">Author Name:</label><br>
+        <input type="text" id="authorName" name="authorName" required><br><br>
+        
+        <fieldset id="booksFieldset">
+            <legend>Books</legend>
+            <div id="booksContainer">
+                <div class="book-entry">
+                    <label for="bookTitle">Book Title:</label><br>
+                    <input type="text" class="bookTitle" name="bookTitle" required><br><br>
+                    
+                    <label for="publicationDate">Publication Date:</label><br>
+                    <input type="date" class="publicationDate" name="publicationDate" required><br><br>
+                    
+                    <label for="genre">Genre:</label><br>
+                    <input type="text" class="genre" name="genre" required><br><br>
+                    
+                    <label for="language">Language:</label><br>
+                    <input type="text" class="language" name="language" required><br><br>
+                </div>
+            </div>
+            <button type="button" onclick="addBookEntry()">Add Book</button>
+        </fieldset>
+        
+        <button type="submit">Create Author</button>
+    </form>
+
+    <script>
+        function createAuthor(event) {
+            event.preventDefault();
+            
+            const authorName = document.getElementById('authorName').value;
+            const books = [];
+
+            // Collect all book entries
+            const bookEntries = document.querySelectorAll('.book-entry');
+            bookEntries.forEach(entry => {
+                const bookTitle = entry.querySelector('.bookTitle').value;
+                const publicationDate = entry.querySelector('.publicationDate').value;
+                const genre = entry.querySelector('.genre').value;
+                const language = entry.querySelector('.language').value;
+
+                books.push({
+                    title: bookTitle,
+                    publicationDate: publicationDate,
+                    genre: genre,
+                    language: language
+                });
+            });
+
+            const data = {
+                name: authorName,
+                books: books
+            };
+            
+            fetch('/api/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify([data]) // Wrap data in an array to match List<AuthorDto> expected by backend
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to create author');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Author created successfully:', data);
+                document.getElementById('create-author-form').reset(); // Reset form fields
+                
+                // Display success message
+                alert('Author created successfully!');
+                
+                // Optionally, redirect to view all authors page or handle success UI update
+            })
+            .catch(error => {
+                console.error('Error creating author:', error);
+                // Handle error (e.g., show error message to user)
+            });
+        }
+
+        function addBookEntry() {
+            const booksContainer = document.getElementById('booksContainer');
+            const newEntry = document.createElement('div');
+            newEntry.classList.add('book-entry');
+            newEntry.innerHTML = `
+                <label for="bookTitle">Book Title:</label><br>
+                <input type="text" class="bookTitle" name="bookTitle" required><br><br>
+                
+                <label for="publicationDate">Publication Date:</label><br>
+                <input type="date" class="publicationDate" name="publicationDate" required><br><br>
+                
+                <label for="genre">Genre:</label><br>
+                <input type="text" class="genre" name="genre" required><br><br>
+                
+                <label for="language">Language:</label><br>
+                <input type="text" class="language" name="language" required><br><br>
+            `;
+            booksContainer.appendChild(newEntry);
+        }
+    </script>
+    
+    <button onclick="history.back()">Go Back</button>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Author</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header>
+        <h1>Update Book</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home Page</a></li>
+            <li><a href="authors.html">View All Authors</a></li>
+            <li><a href="adduser.html">Add Books</a></li>
+            <li><a href="delete.html">Delete Book</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Update Author Details</h2>
+        <form id="fetchAuthorForm">
+            <div class="form-group">
+                <label for="authorId">Enter Author ID to fetch details:</label>
+                <input type="text" id="authorId" class="form-control" required>
+            </div>
+            
+            <button type="submit" class="btn btn-success">Fetch Author Details</button>
+        </form>
+
+        <form id="updateAuthorForm" style="display:none; margin-top: 20px;">
+            <div class="form-group">
+                <label for="authorName">Author Name:</label>
+                <input type="text" id="authorName" class="form-control">
+            </div>
+            
+            <div id="booksContainer"></div>
+
+            <button type="submit" class="btn btn-primary">Update Author</button>
+        </form>
+        <div id="errorMessage" class="text-danger"></div>
+    </div>
+
+    <script>
+        const fetchAuthorForm = document.getElementById('fetchAuthorForm');
+        const updateAuthorForm = document.getElementById('updateAuthorForm');
+        const booksContainer = document.getElementById('booksContainer');
+        const errorMessage = document.getElementById('errorMessage');
+
+        fetchAuthorForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const authorId = document.getElementById('authorId').value;
+
+            try {
+                const response = await fetch(`/api/getbyid/${authorId}`);
+                if (!response.ok) {
+                    throw new Error('Author not found');
+                }
+
+                const author = await response.json();
+                console.log("Fetched author details:", author);
+
+                document.getElementById('authorName').value = author.name || 'N/A';
+
+                // Clear previous book entries
+                booksContainer.innerHTML = '';
+
+                author.books.forEach((book, index) => {
+                    const bookDiv = document.createElement('div');
+                    bookDiv.className = 'book-form';
+                    bookDiv.innerHTML = `
+                        <h4>Book ${index + 1}</h4>
+                        <div class="form-group">
+                            <label for="title${index}">Title:</label>
+                            <input type="text" id="title${index}" class="form-control" value="${book.title || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="publicationDate${index}">Publication Date:</label>
+                            <input type="date" id="publicationDate${index}" class="form-control" value="${book.publicationDate || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="genre${index}">Genre:</label>
+                            <input type="text" id="genre${index}" class="form-control" value="${book.genre || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="language${index}">Language:</label>
+                            <input type="text" id="language${index}" class="form-control" value="${book.language || ''}">
+                        </div>
+                    `;
+                    booksContainer.appendChild(bookDiv);
+                });
+
+                updateAuthorForm.style.display = 'block';
+                errorMessage.textContent = '';
+
+            } catch (error) {
+                console.log("Error fetching author:", error.message);
+                errorMessage.textContent = error.message;
+                updateAuthorForm.style.display = 'none';
+            }
+        });
+
+        updateAuthorForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const authorId = document.getElementById('authorId').value;
+
+            const updatedBooks = Array.from(document.querySelectorAll('.book-form')).map((bookDiv, index) => {
+                return {
+                    id: index + 1, // Assuming book IDs are in sequence, adjust if necessary
+                    title: document.getElementById(`title${index}`).value || null,
+                    publicationDate: document.getElementById(`publicationDate${index}`).value || null,
+                    genre: document.getElementById(`genre${index}`).value || null,
+                    language: document.getElementById(`language${index}`).value || null
+                };
+            });
+
+            const updatedAuthor = {
+                id: authorId,
+                name: document.getElementById('authorName').value || null,
+                books: updatedBooks
+            };
+
+            try {
+                const response = await fetch(`/api/updateuser/${authorId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedAuthor)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update the author');
+                }
+
+                alert('Author updated successfully');
+                // Optionally, reset the form or redirect
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

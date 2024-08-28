@@ -25,55 +25,67 @@ import com.example.demo.service.AuthorService;
 @RequestMapping("/api")
 public class AuthorController {
 
-	@Autowired
-	public AuthorService authorservice;
-	
-	 @Autowired
-	 private PagedResourcesAssembler<AuthorDto> pagedResourcesAssembler;
+    @Autowired
+    private AuthorService authorservice;
 
-	@PostMapping("/create")
-	public List<AuthorDto> createUser(@RequestBody List<AuthorDto> dto){
-		return authorservice.createUser(dto);
-	}
-	
-	@GetMapping("/getall")
-	public List<AuthorDto> getAllUser()
-	{
-		return authorservice.getAllUser();
-	}
-	@GetMapping("/getbyid/{id}")
-	public AuthorDto getById(@PathVariable Integer id) {
-		return authorservice.getById(id);
-		
-	}
-	@GetMapping("/getbyname")
-	public AuthorDto getByName(@RequestParam String name) {
-		return authorservice.getByName(name);
-	}
-	@PutMapping("/updateuser/{id}")
-	public AuthorDto updateUser(@RequestBody AuthorDto dto,@PathVariable Integer id) {
-		return authorservice.updateUser(dto,id);
-		
-	}
-	 @DeleteMapping("/delete/{id}")
-	    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
-	        authorservice.deleteUser(id);
-	        return ResponseEntity.noContent().build();
-	    }
-	 
-	 @DeleteMapping("/deleteall")
-	 public void deleteAll() {
-		 authorservice.deleteAll();
-	 }
-	 
-	
-	 
+    @Autowired
+    private PagedResourcesAssembler<AuthorDto> pagedResourcesAssembler;
+
+    @GetMapping("/authors-page")
+    public String authorsPage() {
+        return "index";
+    }
+
+  
+
+    @PostMapping("/create")
+   public List<AuthorDto> createUser(@RequestBody List<AuthorDto> dto) {
+        return authorservice.createUser(dto);
+    }
+
+    @GetMapping("/getall")
+    public List<AuthorDto> getAllUser() {
+        return authorservice.getAllUser();
+    }
+
+    @GetMapping("/getbyid/{id}")
+    public AuthorDto getById(@PathVariable Integer id) {
+        return authorservice.getById(id);
+    }
+
+    @GetMapping("/getbyname")
+    public AuthorDto getByName(@RequestParam String name) {
+        return authorservice.getByName(name);
+    }
+
+   @PutMapping("/updateuser/{id}")
+    public AuthorDto updateUser(@RequestBody AuthorDto dto, @PathVariable Integer id) {
+        return authorservice.updateUser(dto, id);
+    }
+    @GetMapping("/updateuser/{id}")
+    public ResponseEntity<AuthorDto> getAuthorById(@PathVariable Integer id) {
+        AuthorDto authorDto = authorservice.getById(id);
+        return ResponseEntity.ok(authorDto);
+    }
+
+   
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+        authorservice.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/deleteall")
+    public void deleteAll() {
+        authorservice.deleteAll();
+    }
+
     @GetMapping("/authors")
-	public PagedModel<EntityModel<AuthorDto>> getAllAuthors(
-	            @RequestParam(value = "page", defaultValue = "0") int page,
-	            @RequestParam(value = "size", defaultValue = "10") int size) {
-	        Page<AuthorDto> authorsPage = authorservice.getAllAuthors(page, size);
-	        return pagedResourcesAssembler.toModel(authorsPage);
-	    }
-    
+    public PagedModel<EntityModel<AuthorDto>> getAllAuthors(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        Page<AuthorDto> authorsPage = authorservice.getAllAuthors(page, size);
+        return pagedResourcesAssembler.toModel(authorsPage);
+    }
 }

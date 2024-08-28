@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.hateoas.RepresentationModel;
@@ -11,7 +12,7 @@ public class AuthorDto  extends RepresentationModel<AuthorDto> {
 
     private Integer id;
     private String name;
-    private List<BookDto> books;
+    private List<BookDto> books=new ArrayList<>();;
 	public Integer getId() {
 		return id;
 	}

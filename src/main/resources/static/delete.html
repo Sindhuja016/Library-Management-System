@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Book</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Delete Book</h1>
+    </header>
+
+    <nav>
+        <ul>
+           <li><a href="index.html">Home Page</a></li>
+            <li><a href="authors.html">View All Authors</a></li>
+            <li><a href="adduser.html">Add Books</a></li>
+            <li><a href="update.html">Update Book</a></li>
+        </ul>
+    </nav>
+
+    <form id="delete-book-form" onsubmit="deleteBook(event)">
+        <label for="bookId">Book ID:</label><br>
+        <input type="number" id="bookId" name="bookId" required><br><br>
+        <button type="submit">Delete Book</button>
+    </form>
+
+    <script>
+        function deleteBook(event) {
+            event.preventDefault();
+            
+            const bookId = document.getElementById('bookId').value;
+
+            fetch(`/api/deletebook/${bookId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to delete book');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Book deleted successfully:', data);
+                document.getElementById('delete-book-form').reset(); // Reset form fields
+                
+                // Display success message
+                alert('Book deleted successfully!');
+                
+                // Optionally, redirect to view all books page or handle success UI update
+            })
+            .catch(error => {
+                console.error('Error deleting book:', error);
+                // Handle error (e.g., show error message to user)
+            });
+        }
+    </script>
+    
+    <button onclick="history.back()">Go Back</button>
+</body>
+</html>

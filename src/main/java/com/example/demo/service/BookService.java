@@ -56,6 +56,11 @@ public class BookService {
         Page<Book> bookPage = bRepo.filterByDate(publicationDate, pageable);
         return bookPage.map(this::changeToDto);
     }
+    public void deleteUser(Integer id) {
+		bRepo.deleteById(id);
+		
+
+	}
 
     private BookDto changeToDto(Book b) {
         BookDto dt = new BookDto();
